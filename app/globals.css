@@ -1,9 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-test open
-
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
+
+@import "tailwindcss";
 
 :root {
   --primary: #6aaa4f;
@@ -41,7 +38,6 @@ h3 {
   color: var(--text-primary);
 }
 
-/* Utility classes */
 .btn-primary {
   background-color: var(--primary);
   color: white;
@@ -105,7 +101,6 @@ h3 {
   box-shadow: 0 12px 30px rgba(106, 170, 79, 0.15);
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -119,7 +114,6 @@ h3 {
   border-radius: 999px;
 }
 
-/* Selection */
 ::selection {
   background: var(--accent);
   color: var(--text-primary);
