@@ -32,7 +32,7 @@ export default function Footer() {
                 <Sprout size={18} color="white" />
               </div>
               <span style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.3rem', fontWeight: '700', color: 'white' }}>
-                Urban<span style={{ color: 'var(--accent)' }}>Kerala</span>
+                Urban<span style={{ color: 'var(--accent)' }}>Sprout</span>
               </span>
             </div>
             <p style={{ fontSize: '0.9rem', lineHeight: '1.7', color: 'rgba(255,255,255,0.6)' }}>
