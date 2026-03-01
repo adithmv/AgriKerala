@@ -32,7 +32,7 @@ export default function Footer() {
                 <Sprout size={18} color="white" />
               </div>
               <span style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.3rem', fontWeight: '700', color: 'white' }}>
-                Agri<span style={{ color: 'var(--accent)' }}>Kerala</span>
+                Urban<span style={{ color: 'var(--accent)' }}>Kerala</span>
               </span>
             </div>
             <p style={{ fontSize: '0.9rem', lineHeight: '1.7', color: 'rgba(255,255,255,0.6)' }}>
@@ -109,7 +109,7 @@ export default function Footer() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {[
                 { Icon: Phone, text: '+91 98765 43210' },
-                { Icon: Mail, text: 'hello@agrikerala.in' },
+                { Icon: Mail, text: 'hello@UrbanSprout.in' },
                 { Icon: MapPin, text: 'Kochi, Kerala, India' },
               ].map(({ Icon, text }) => (
                 <div key={text} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -132,7 +132,7 @@ export default function Footer() {
           gap: '1rem'
         }}>
           <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>
-            © 2024 AgriKerala. All rights reserved.
+            © 2024 UrbanSprout. All rights reserved.
           </p>
           <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>
             Made with care for Kerala farmers

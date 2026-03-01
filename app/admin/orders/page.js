@@ -73,7 +73,7 @@ export default function AdminOrders() {
             <Sprout size={18} color="white" />
           </div>
           <div>
-            <div style={{ color: 'white', fontWeight: '700', fontSize: '0.95rem' }}>AgriKerala</div>
+            <div style={{ color: 'white', fontWeight: '700', fontSize: '0.95rem' }}>UrbanSprout</div>
             <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>Admin Panel</div>
           </div>
         </div>

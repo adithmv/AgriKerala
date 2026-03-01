@@ -99,7 +99,7 @@ export default function HomePage() {
                 display: 'flex', gap: '2.5rem', marginTop: '3rem', flexWrap: 'wrap'
               }}>
                 {[
-                  { value: '500+', label: 'Happy Growers' },
+                  { value: '500+', label: 'Corps suggestions' },
                   { value: '50+', label: 'Products' },
                   { value: '14', label: 'Districts Covered' },
                 ].map(stat => (
@@ -199,7 +199,7 @@ export default function HomePage() {
       <section style={{ padding: '5rem 1.5rem', background: 'var(--surface)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-            <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', marginBottom: '1rem' }}>Why AgriKerala?</h2>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', marginBottom: '1rem' }}>Why UrbanSprout?</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', maxWidth: '500px', margin: '0 auto' }}>
               Built specifically for Kerala&apos;s climate, culture and rooftop farming needs.
             </p>

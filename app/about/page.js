@@ -26,14 +26,14 @@ export default function AboutPage() {
           Made with care for Kerala
         </div>
         <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginBottom: '1rem' }}>
-          About AgriKerala
+          About UrbanSprout
         </h1>
         <p style={{
           color: 'var(--text-secondary)', fontSize: '1.05rem',
           maxWidth: '560px', margin: '0 auto', lineHeight: '1.8'
         }}>
           We believe every Kerala home deserves a thriving rooftop garden.
-          AgriKerala was built to make that possible for everyone.
+          UrbanSprout was built to make that possible for everyone.
         </p>
       </div>
 
@@ -52,7 +52,7 @@ export default function AboutPage() {
                 Our Mission
               </h2>
               <p style={{ color: 'var(--text-secondary)', lineHeight: '1.9', fontSize: '1rem', marginBottom: '1.25rem' }}>
-                Kerala has one of the richest agricultural traditions in India. Yet in today&apos;s urban landscape, most families have lost touch with growing their own food. We built AgriKerala to bridge that gap.
+                Kerala has one of the richest Urbancultural traditions in India. Yet in today&apos;s urban landscape, most families have lost touch with growing their own food. We built UrbanSprout to bridge that gap.
               </p>
               <p style={{ color: 'var(--text-secondary)', lineHeight: '1.9', fontSize: '1rem', marginBottom: '1.25rem' }}>
                 Our AI planner removes the guesswork from rooftop farming. By analysing your specific location in Kerala, your rooftop dimensions and your available time, we give you a farming plan that actually works for your life.
@@ -133,7 +133,7 @@ export default function AboutPage() {
           }}>
             {[
               { icon: Phone, title: 'Call Us', value: '+91 98765 43210', href: 'tel:+919876543210' },
-              { icon: Mail, title: 'Email Us', value: 'hello@agrikerala.in', href: 'mailto:hello@agrikerala.in' },
+              { icon: Mail, title: 'Email Us', value: 'hello@UrbanSprout.in', href: 'mailto:hello@UrbanSprout.in' },
               { icon: MessageCircle, title: 'WhatsApp', value: 'Chat with us', href: 'https://wa.me/919876543210' },
               { icon: MapPin, title: 'Location', value: 'Kochi, Kerala', href: '#' },
             ].map(({ icon: Icon, title, value, href }) => (

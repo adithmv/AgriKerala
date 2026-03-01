@@ -27,7 +27,7 @@ export default function ProductDetailPage() {
   }
 
   const handleWhatsApp = () => {
-    const message = `Hi, I'm interested in buying *${product.name}* from AgriKerala.\n\nPrice: ₹${product.price}\nCategory: ${product.category}\n\nPlease confirm availability.`
+    const message = `Hi, I'm interested in buying *${product.name}* from UrbanSprout.\n\nPrice: ₹${product.price}\nCategory: ${product.category}\n\nPlease confirm availability.`
     const url = `https://wa.me/${product.whatsapp_number}?text=${encodeURIComponent(message)}`
     window.open(url, '_blank')
   }

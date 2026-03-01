@@ -42,7 +42,7 @@ export default function Navbar() {
             fontWeight: '700',
             color: 'var(--text-primary)'
           }}>
-            Agri<span style={{ color: 'var(--primary)' }}>Kerala</span>
+            Urban<span style={{ color: 'var(--primary)' }}>Sprout</span>
           </span>
         </Link>
 

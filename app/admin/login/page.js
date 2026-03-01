@@ -101,7 +101,7 @@ export default function AdminLogin() {
             Admin Login
           </h1>
           <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
-            AgriKerala Control Panel
+            UrbanSprout Control Panel
           </p>
         </div>
 
@@ -135,7 +135,7 @@ export default function AdminLogin() {
               }} />
               <input
                 type="email"
-                placeholder="admin@agrikerala.in"
+                placeholder="admin@UrbanSprout.in"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 style={inputStyle}
