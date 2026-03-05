@@ -132,7 +132,7 @@ export default function Footer() {
           gap: '1rem'
         }}>
           <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>
-            © 2024 UrbanSprout. All rights reserved.
+            © 2026 UrbanSprout. All rights reserved.&apos; not yet &apos;
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>
