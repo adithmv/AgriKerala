@@ -134,9 +134,20 @@ export default function Footer() {
           <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>
             © 2024 UrbanSprout. All rights reserved.
           </p>
-          <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>
-            Made with care for Kerala farmers
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+            <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>
+              Made with care for botanophile
+            </p>
+            <Link href="/admin/login" style={{
+              fontSize: '0.75rem', color: 'rgba(255,255,255,0.2)',
+              textDecoration: 'none', transition: 'color 0.2s'
+            }}
+              onMouseEnter={e => e.target.style.color = 'rgba(255,255,255,0.5)'}
+              onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.2)'}
+            >
+              Admin
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
