@@ -1,11 +1,33 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Leaf, Menu, X, Sprout } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Leaf, Menu, X, Sprout, User, ShoppingCart, LogOut } from 'lucide-react'
+import { supabase } from '../lib/supabase'
 
 export default function Navbar() {
+  const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user || null)
+    })
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null)
+    })
+
+    return () => listener.subscription.unsubscribe()
+  }, [])
+
+  async function handleLogout() {
+    await supabase.auth.signOut()
+    router.push('/')
+    router.refresh()
+  }
 
   return (
     <nav style={{
@@ -76,7 +98,7 @@ export default function Navbar() {
 
         {/* CTA + Hamburger */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <Link href="/planner" className="btn-primary" style={{
+          <Link href="/planner" className="btn-primary desktop-nav" style={{
             fontSize: '0.85rem',
             padding: '0.6rem 1.25rem',
             display: 'flex',
@@ -86,6 +108,27 @@ export default function Navbar() {
             <Leaf size={15} />
             Try AI Planner
           </Link>
+
+          <Link href="/cart" style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center' }}>
+            <ShoppingCart size={20} />
+          </Link>
+
+          {user ? (
+            <div className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <Link href="/account" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', textDecoration: 'none', color: 'var(--text-primary)', fontSize: '0.9rem', fontWeight: '600' }}>
+                <User size={17} />
+                {user.user_metadata?.full_name?.split(' ')[0] || 'Account'}
+              </Link>
+              <button onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center' }}>
+                <LogOut size={17} />
+              </button>
+            </div>
+          ) : (
+            <Link href="/login" className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', textDecoration: 'none', color: 'var(--text-primary)', fontSize: '0.9rem', fontWeight: '600' }}>
+              <User size={17} />
+              Login
+            </Link>
+          )}
 
           {/* Mobile Hamburger */}
           <button
@@ -121,6 +164,15 @@ export default function Navbar() {
           <Link href="/shop" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: '500' }} onClick={() => setMenuOpen(false)}>Shop</Link>
           <Link href="/planner" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: '500' }} onClick={() => setMenuOpen(false)}>AI Planner</Link>
           <Link href="/about" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: '500' }} onClick={() => setMenuOpen(false)}>About</Link>
+          <Link href="/cart" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: '500' }} onClick={() => setMenuOpen(false)}>Cart</Link>
+          {user ? (
+            <>
+              <Link href="/account" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: '500' }} onClick={() => setMenuOpen(false)}>My Account</Link>
+              <span onClick={() => { setMenuOpen(false); handleLogout() }} style={{ color: 'var(--text-secondary)', fontWeight: '500', cursor: 'pointer' }}>Log Out</span>
+            </>
+          ) : (
+            <Link href="/login" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: '500' }} onClick={() => setMenuOpen(false)}>Login</Link>
+          )}
         </div>
       )}
 

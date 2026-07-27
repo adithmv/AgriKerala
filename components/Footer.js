@@ -67,6 +67,7 @@ export default function Footer() {
                 { label: 'Shop', href: '/shop' },
                 { label: 'AI Planner', href: '/planner' },
                 { label: 'About Us', href: '/about' },
+                { label: 'Login/Signup', href: '/login' },
               ].map(link => (
                 <Link key={link.href} href={link.href} style={{
                   color: 'rgba(255,255,255,0.6)',
