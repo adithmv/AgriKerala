@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../../lib/supabase'
+import { verifyAdmin } from '../../../lib/adminAuth'
 import Link from 'next/link'
 import {
   ShoppingCart, Package, TrendingUp, Brain,
@@ -13,16 +14,21 @@ export default function AdminOrders() {
   const router = useRouter()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
+  const [authChecked, setAuthChecked] = useState(false)
   const [filter, setFilter] = useState('all')
 
   useEffect(() => {
     checkAuth()
-    fetchOrders()
   }, [])
 
   async function checkAuth() {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) router.push('/admin/login')
+    const isAdmin = await verifyAdmin()
+    if (!isAdmin) {
+      router.push('/admin/login')
+      return
+    }
+    setAuthChecked(true)
+    fetchOrders()
   }
 
   async function fetchOrders() {
@@ -53,6 +59,8 @@ export default function AdminOrders() {
     delivered: { bg: '#dcfce7', color: '#16a34a' },
     cancelled: { bg: '#fef2f2', color: '#dc2626' },
   }
+
+  if (!authChecked) return null
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex' }}>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../../lib/supabase'
+import { verifyAdmin } from '../../../lib/adminAuth'
 import Link from 'next/link'
 import {
   Package, ShoppingCart, Brain, TrendingUp,
@@ -20,22 +21,25 @@ export default function AdminDashboard() {
   const [recentOrders, setRecentOrders] = useState([])
   const [topDistricts, setTopDistricts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [authChecked, setAuthChecked] = useState(false)
   const [adminEmail, setAdminEmail] = useState('')
 
   useEffect(() => {
     checkAuth()
-    fetchStats()
-    fetchRecentOrders()
-    fetchTopDistricts()
   }, [])
 
   async function checkAuth() {
     const { data: { session } } = await supabase.auth.getSession()
-    if (!session) {
+    const isAdmin = await verifyAdmin()
+    if (!isAdmin) {
       router.push('/admin/login')
       return
     }
     setAdminEmail(session.user.email)
+    setAuthChecked(true)
+    fetchStats()
+    fetchRecentOrders()
+    fetchTopDistricts()
   }
 
   async function fetchStats() {
@@ -92,6 +96,8 @@ export default function AdminDashboard() {
     { icon: TrendingUp, label: 'Pending Orders', value: stats.pendingOrders, color: '#f59e0b', link: '/admin/orders' },
     { icon: Brain, label: 'Planner Uses', value: stats.totalPlannerUses, color: '#8b5cf6', link: '#' },
   ]
+
+  if (!authChecked) return null
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex' }}>

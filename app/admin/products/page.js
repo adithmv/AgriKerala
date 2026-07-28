@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../../lib/supabase'
+import { verifyAdmin } from '../../../lib/adminAuth'
 import Link from 'next/link'
 import {
   Plus, Pencil, Trash2, Package,
@@ -15,6 +16,7 @@ export default function AdminProducts() {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
+  const [authChecked, setAuthChecked] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [editingProduct, setEditingProduct] = useState(null)
   const [saving, setSaving] = useState(false)
@@ -27,13 +29,17 @@ export default function AdminProducts() {
 
   useEffect(() => {
     checkAuth()
-    fetchProducts()
-    fetchCategories()
   }, [])
 
   async function checkAuth() {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) router.push('/admin/login')
+    const isAdmin = await verifyAdmin()
+    if (!isAdmin) {
+      router.push('/admin/login')
+      return
+    }
+    setAuthChecked(true)
+    fetchProducts()
+    fetchCategories()
   }
 
   async function fetchProducts() {
@@ -122,6 +128,8 @@ export default function AdminProducts() {
     color: 'var(--text-secondary)', marginBottom: '0.4rem',
     display: 'block', textTransform: 'uppercase', letterSpacing: '0.04em'
   }
+
+  if (!authChecked) return null
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex' }}>
@@ -388,12 +396,15 @@ export default function AdminProducts() {
                     const { data, error } = await supabase.storage
                       .from('product-images')
                       .upload(fileName, file)
-                    if (!error) {
-                      const { data: urlData } = supabase.storage
-                        .from('product-images')
-                        .getPublicUrl(fileName)
-                      setForm({ ...form, image_url: urlData.publicUrl })
+                    if (error) {
+                      console.error('Image upload failed:', error)
+                      alert('Image upload failed: ' + error.message)
+                      return
                     }
+                    const { data: urlData } = supabase.storage
+                      .from('product-images')
+                      .getPublicUrl(fileName)
+                    setForm({ ...form, image_url: urlData.publicUrl })
                   }}
                 />
               </div>
