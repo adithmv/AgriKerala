@@ -53,9 +53,19 @@ export default function CustomerLogin() {
     } else {
       if (!phone.trim()) throw new Error('Please enter your mobile number.')
       phoneToStore = phone.trim()
+
+      // Check if this phone number is already registered before attempting signup,
+      // so we fail gracefully instead of hitting the server with a doomed request.
+      const { data: existingEmail } = await supabase.rpc('get_email_by_phone', {
+        phone_input: phoneToStore
+      })
+      if (existingEmail) {
+        throw new Error('An account already exists with that mobile number. Try logging in instead.')
+      }
+
       // Supabase Auth needs an email internally; we generate one from the phone
       // number behind the scenes so people can sign up/login with just phone + password.
-      signupEmail = `${phoneToStore}@agrikerala.local`
+      signupEmail = `${phoneToStore}@phoneuser.agrikerala.in`
     }
 
     const { data, error: signupError } = await supabase.auth.signUp({
@@ -72,6 +82,9 @@ export default function CustomerLogin() {
     if (signupError) {
       if (signupError.message.toLowerCase().includes('already registered')) {
         throw new Error('An account already exists with that ' + (method === 'email' ? 'email' : 'mobile number') + '.')
+      }
+      if (signupError.status === 500) {
+        throw new Error('That account already exists, or something went wrong. Please try again in a moment.')
       }
       throw new Error(signupError.message)
     }
@@ -103,7 +116,8 @@ export default function CustomerLogin() {
     })
 
     if (loginError) {
-      throw new Error('Incorrect password or account not found.')
+      console.error('Login error:', loginError)
+      throw new Error(loginError.message)
     }
 
     router.push('/')
