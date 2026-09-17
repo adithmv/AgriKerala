@@ -15,7 +15,8 @@ export async function POST(request) {
       )
     }
 
-    // Run AI agent
+    // Measure the planner itself, excluding database logging.
+    const startedAt = performance.now()
     const result = await runPlannerAgent({
       district,
       length: parseFloat(length),
@@ -26,15 +27,19 @@ export async function POST(request) {
       timePerWeek
     })
 
-    // Log to Supabase
-    await supabase.from('planner_logs').insert({
+    const durationMs = Math.round(performance.now() - startedAt)
+
+    // A logging failure must not discard a successful plan.
+    const { error: logError } = await supabase.from('planner_logs').insert({
       district,
       rooftop_length: parseFloat(length),
       rooftop_width: parseFloat(width),
       roof_type: roofType,
       purpose,
-      recommendations: result.crops
+      recommendations: result.crops,
+      duration_ms: durationMs
     })
+    if (logError) console.error('Planner logging failed:', logError.message)
 
     return Response.json({ success: true, data: result })
 

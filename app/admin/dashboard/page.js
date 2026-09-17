@@ -7,8 +7,15 @@ import { verifyAdmin } from '../../../lib/adminAuth'
 import Link from 'next/link'
 import {
   Package, ShoppingCart, Brain, TrendingUp,
-  LogOut, Sprout, Plus, Eye
+  LogOut, Sprout, Plus, Eye, Clock
 } from 'lucide-react'
+
+function formatDuration(ms) {
+  if (ms == null || !Number.isFinite(ms) || ms < 0) return '—'
+  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`
+  const seconds = Math.round(ms / 1000)
+  return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
+}
 
 export default function AdminDashboard() {
   const router = useRouter()
@@ -16,7 +23,8 @@ export default function AdminDashboard() {
     totalProducts: 0,
     totalOrders: 0,
     pendingOrders: 0,
-    totalPlannerUses: 0
+    totalPlannerUses: 0,
+    avgAiTimeMs: null
   })
   const [recentOrders, setRecentOrders] = useState([])
   const [topDistricts, setTopDistricts] = useState([])
@@ -50,11 +58,36 @@ export default function AdminDashboard() {
       supabase.from('planner_logs').select('id', { count: 'exact' })
     ])
 
+    // Page through recorded durations so the average is not limited to
+    // Supabase's default maximum rows per response.
+    let totalDuration = 0
+    let durationCount = 0
+    let durationError = false
+    const pageSize = 500
+    for (let offset = 0; ; offset += pageSize) {
+      const { data, error } = await supabase.from('planner_logs')
+        .select('duration_ms').not('duration_ms', 'is', null)
+        .order('id').range(offset, offset + pageSize - 1)
+      if (error) {
+        console.error('Could not load planner durations:', error.message)
+        durationError = true
+        break
+      }
+      for (const { duration_ms } of data || []) {
+        if (Number.isFinite(duration_ms) && duration_ms >= 0) {
+          totalDuration += duration_ms
+          durationCount++
+        }
+      }
+      if (!data || data.length < pageSize) break
+    }
+
     setStats({
       totalProducts: products.count || 0,
       totalOrders: orders.count || 0,
       pendingOrders: pending.count || 0,
-      totalPlannerUses: planner.count || 0
+      totalPlannerUses: planner.count || 0,
+      avgAiTimeMs: !durationError && durationCount ? totalDuration / durationCount : null
     })
     setLoading(false)
   }
@@ -95,6 +128,7 @@ export default function AdminDashboard() {
     { icon: ShoppingCart, label: 'Total Orders', value: stats.totalOrders, color: '#3b82f6', link: '/admin/orders' },
     { icon: TrendingUp, label: 'Pending Orders', value: stats.pendingOrders, color: '#f59e0b', link: '/admin/orders' },
     { icon: Brain, label: 'Planner Uses', value: stats.totalPlannerUses, color: '#8b5cf6', link: '#' },
+    { icon: Clock, label: 'Avg AI Response Time', value: formatDuration(stats.avgAiTimeMs), color: '#0ea5e9', link: '#' },
   ]
 
   if (!authChecked) return null

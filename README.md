@@ -2,6 +2,26 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Admin order updates
+
+Before using manual order add/edit/delete and planner response timing, run
+`supabase/migrations/202609170001_admin_order_updates.sql` in your Supabase
+project's SQL Editor (or apply it with your existing Supabase migration workflow).
+It adds nullable `orders.address` and `planner_logs.duration_ms` columns and can
+be run again safely. Existing orders and planner logs are preserved.
+
+The existing database policies must allow authenticated admins to select,
+insert, update, and delete orders, and read planner logs. Keep these permissions
+restricted to admins; the browser's page guard does not replace database RLS.
+The planner API also needs its existing permission to insert planner logs.
+
+The dashboard averages recorded server-side planner execution times, excluding
+old logs without timing data. This measures AI response time, not user session
+length. Failed order saves retain the form contents and display an error.
+
+Local development requires `NEXT_PUBLIC_SUPABASE_URL`,
+`NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `GEMINI_API_KEY` in `.env.local`.
+
 First, run the development server:
 
 ```bash
