@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Leaf, Menu, X, Sprout, User, ShoppingCart, LogOut } from 'lucide-react'
+import { Leaf, Menu, X, Sprout, User, LogOut } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 export default function Navbar() {
@@ -109,10 +109,6 @@ export default function Navbar() {
             Try AI Planner
           </Link>
 
-          <Link href="/cart" style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center' }}>
-            <ShoppingCart size={20} />
-          </Link>
-
           {user ? (
             <div className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <Link href="/account" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', textDecoration: 'none', color: 'var(--text-primary)', fontSize: '0.9rem', fontWeight: '600' }}>
@@ -164,7 +160,6 @@ export default function Navbar() {
           <Link href="/shop" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: '500' }} onClick={() => setMenuOpen(false)}>Shop</Link>
           <Link href="/planner" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: '500' }} onClick={() => setMenuOpen(false)}>AI Planner</Link>
           <Link href="/about" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: '500' }} onClick={() => setMenuOpen(false)}>About</Link>
-          <Link href="/cart" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: '500' }} onClick={() => setMenuOpen(false)}>Cart</Link>
           {user ? (
             <>
               <Link href="/account" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: '500' }} onClick={() => setMenuOpen(false)}>My Account</Link>
