@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../../lib/supabase'
 import { verifyAdmin } from '../../../lib/adminAuth'
+import { BUSINESS_WHATSAPP_NUMBER } from '../../../lib/whatsapp'
 import Link from 'next/link'
 import {
   Plus, Pencil, Trash2, Package,
-  TrendingUp, ShoppingCart, Brain,
+  TrendingUp, ShoppingCart,
   Sprout, Eye, LogOut, X, Check
 } from 'lucide-react'
 
@@ -24,10 +25,11 @@ export default function AdminProducts() {
     name: '', category: '', price: '',
     original_price: '', description: '',
     details: '', badge: '', in_stock: true,
-    whatsapp_number: '', image_url: ''
+    whatsapp_number: BUSINESS_WHATSAPP_NUMBER, image_url: ''
   })
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability
     checkAuth()
   }, [])
 
@@ -62,7 +64,7 @@ export default function AdminProducts() {
       name: '', category: '', price: '',
       original_price: '', description: '',
       details: '', badge: '', in_stock: true,
-      whatsapp_number: '', image_url: ''
+      whatsapp_number: BUSINESS_WHATSAPP_NUMBER, image_url: ''
     })
     setShowForm(true)
   }
@@ -78,7 +80,7 @@ export default function AdminProducts() {
       details: product.details || '',
       badge: product.badge || '',
       in_stock: product.in_stock,
-      whatsapp_number: product.whatsapp_number || '',
+      whatsapp_number: BUSINESS_WHATSAPP_NUMBER,
       image_url: product.image_url || ''
     })
     setShowForm(true)
@@ -160,7 +162,6 @@ export default function AdminProducts() {
             { icon: TrendingUp, label: 'Dashboard', href: '/admin/dashboard', active: false },
             { icon: Package, label: 'Products', href: '/admin/products', active: true },
             { icon: ShoppingCart, label: 'Orders', href: '/admin/orders', active: false },
-            { icon: Brain, label: 'Planner Logs', href: '#', active: false },
             { icon: Eye, label: 'View Site', href: '/', active: false },
           ].map(({ icon: Icon, label, href, active }) => (
             <Link key={label} href={href} style={{
@@ -420,8 +421,8 @@ export default function AdminProducts() {
               </div>
 
               <div>
-                <label style={labelStyle}>WhatsApp Number</label>
-                <input style={inputStyle} value={form.whatsapp_number} onChange={e => setForm({ ...form, whatsapp_number: e.target.value })} placeholder="919876543210" />
+                <label style={labelStyle}>Orders WhatsApp Number</label>
+                <input style={inputStyle} value={BUSINESS_WHATSAPP_NUMBER} readOnly />
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingTop: '1.5rem' }}>

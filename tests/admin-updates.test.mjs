@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
+import { getPlannerQuotaError } from '../lib/plannerError.js'
 
 const dashboard = await readFile(new URL('../app/admin/dashboard/page.js', import.meta.url), 'utf8')
 const formatter = dashboard.match(/function formatDuration\(ms\) \{[\s\S]*?\n\}/)[0]
@@ -94,7 +95,7 @@ function createRoute({ logError = null, agentError = null } = {}) {
   const ticks = [100, 1334.6]
   const result = { crops: ['tomato'] }
   let agentInput
-  const POST = new Function('runPlannerAgent', 'supabase', 'performance', 'console', `${route}; return POST`)(
+  const POST = new Function('runPlannerAgent', 'supabase', 'performance', 'console', 'getPlannerQuotaError', `${route}; return POST`)(
     async input => {
       agentInput = input
       if (agentError) throw agentError
@@ -105,7 +106,8 @@ function createRoute({ logError = null, agentError = null } = {}) {
       return { error: logError }
     } }) },
     { now: () => ticks.shift() },
-    { error: (...args) => errors.push(args) }
+    { error: (...args) => errors.push(args), warn: (...args) => errors.push(args) },
+    getPlannerQuotaError
   )
   return { POST, inserts, errors, result, getAgentInput: () => agentInput }
 }
@@ -142,4 +144,60 @@ test('failed planner does not record a successful duration', async () => {
   const response = await harness.POST({ json: async () => body })
   assert.equal(response.status, 500)
   assert.equal(harness.inserts.length, 0)
+})
+
+test('daily quota exhaustion returns 429 without the misleading short retry delay', async () => {
+  const agentError = Object.assign(new Error(JSON.stringify({ error: {
+    code: 429, status: 'RESOURCE_EXHAUSTED',
+    details: [
+      { '@type': 'type.googleapis.com/google.rpc.QuotaFailure', violations: [
+        { quotaId: 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', quotaValue: '20' }
+      ] },
+      { '@type': 'type.googleapis.com/google.rpc.RetryInfo', retryDelay: '33s' }
+    ]
+  } })), { status: 429 })
+  const harness = createRoute({ agentError })
+  const response = await harness.POST({ json: async () => body })
+  const payload = await response.json()
+  assert.equal(response.status, 429)
+  assert.equal(payload.code, 'AI_DAILY_QUOTA_EXHAUSTED')
+  assert.match(payload.error, /daily usage limit/)
+  assert.equal(payload.retryAfterSeconds, undefined)
+  assert.equal(response.headers.get('Retry-After'), null)
+  assert.equal(harness.inserts.length, 0)
+})
+
+test('temporary quota error exposes the provider delay and retry header', async () => {
+  const agentError = Object.assign(new Error(JSON.stringify({ error: {
+    code: 429, details: [{ '@type': 'type.googleapis.com/google.rpc.RetryInfo', retryDelay: '33.8s' }]
+  } })), { status: 429 })
+  const harness = createRoute({ agentError })
+  const response = await harness.POST({ json: async () => body })
+  assert.equal(response.status, 429)
+  assert.equal(response.headers.get('Retry-After'), '34')
+  assert.equal((await response.json()).code, 'AI_RATE_LIMITED')
+})
+
+test('plain-text 429 has a conservative retry delay', () => {
+  const result = getPlannerQuotaError(Object.assign(new Error('Too many requests'), { status: 429 }))
+  assert.equal(result.retryAfterSeconds, 60)
+  assert.equal(getPlannerQuotaError(new Error('Other failure')), null)
+})
+
+test('invalid numeric inputs never consume an AI request', async () => {
+  for (const change of [{ length: '-1' }, { width: 'abc' }, { width: 'Infinity' }]) {
+    const harness = createRoute()
+    const response = await harness.POST({ json: async () => ({ ...body, ...change }) })
+    assert.equal(response.status, 400)
+    assert.equal(harness.getAgentInput(), undefined)
+  }
+})
+
+test('weekly time ranges offered by the form are accepted', async () => {
+  for (const timePerWeek of ['1 to 2', '3 to 5', '5 to 10', 'More than 10']) {
+    const harness = createRoute()
+    const response = await harness.POST({ json: async () => ({ ...body, timePerWeek }) })
+    assert.equal(response.status, 200)
+    assert.equal(harness.getAgentInput().timePerWeek, timePerWeek)
+  }
 })

@@ -166,7 +166,6 @@ export default function AdminDashboard() {
             { icon: TrendingUp, label: 'Dashboard', href: '/admin/dashboard', active: true },
             { icon: Package, label: 'Products', href: '/admin/products', active: false },
             { icon: ShoppingCart, label: 'Orders', href: '/admin/orders', active: false },
-            { icon: Brain, label: 'Planner Logs', href: '#', active: false },
             { icon: Eye, label: 'View Site', href: '/', active: false },
           ].map(({ icon: Icon, label, href, active }) => (
             <Link key={label} href={href} style={{

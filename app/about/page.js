@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { BUSINESS_WHATSAPP_NUMBER, BUSINESS_PHONE_DISPLAY, createWhatsAppOrderUrl } from '../../lib/whatsapp'
 import { Leaf, Brain, Heart, MapPin, Mail, Phone, MessageCircle } from 'lucide-react'
 
 export default function AboutPage() {
@@ -132,9 +133,9 @@ export default function AboutPage() {
             margin: '0 auto'
           }}>
             {[
-              { icon: Phone, title: 'Call Us', value: '+91 98765 43210', href: 'tel:+919876543210' },
+              { icon: Phone, title: 'Call Us', value: BUSINESS_PHONE_DISPLAY, href: `tel:+${BUSINESS_WHATSAPP_NUMBER}` },
               { icon: Mail, title: 'Email Us', value: 'hello@UrbanSprout.in', href: 'mailto:hello@UrbanSprout.in' },
-              { icon: MessageCircle, title: 'WhatsApp', value: 'Chat with us', href: 'https://wa.me/919876543210' },
+              { icon: MessageCircle, title: 'WhatsApp', value: 'Chat with us', href: createWhatsAppOrderUrl('Hi, I would like to know more about UrbanSprout.') },
               { icon: MapPin, title: 'Location', value: 'Kochi, Kerala', href: '#' },
             ].map(({ icon: Icon, title, value, href }) => (
               <a key={title} href={href} style={{ textDecoration: 'none' }}>

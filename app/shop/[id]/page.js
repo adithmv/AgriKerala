@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '../../../lib/supabase'
+import { createWhatsAppOrderUrl } from '../../../lib/whatsapp'
 import { Star, ArrowLeft, Leaf, MessageCircle, Package, Truck, Shield } from 'lucide-react'
 
 export default function ProductDetailPage() {
@@ -28,8 +29,7 @@ export default function ProductDetailPage() {
 
   const handleWhatsApp = () => {
     const message = `Hi, I'm interested in buying *${product.name}* from UrbanSprout.\n\nPrice: ₹${product.price}\nCategory: ${product.category}\n\nPlease confirm availability.`
-    const url = `https://wa.me/${product.whatsapp_number}?text=${encodeURIComponent(message)}`
-    window.open(url, '_blank')
+    window.open(createWhatsAppOrderUrl(message), '_blank', 'noopener,noreferrer')
   }
 
   if (loading) return (

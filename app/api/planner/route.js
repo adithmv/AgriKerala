@@ -1,5 +1,6 @@
 import { runPlannerAgent } from '../../../lib/gemini'
 import { supabase } from '../../../lib/supabase'
+import { getPlannerQuotaError } from '../../../lib/plannerError'
 
 export async function POST(request) {
   try {
@@ -13,6 +14,10 @@ export async function POST(request) {
         { error: 'All fields are required' },
         { status: 400 }
       )
+    }
+
+    if (![length, width].every(value => Number.isFinite(Number(value)) && Number(value) > 0)) {
+      return Response.json({ error: 'Rooftop dimensions must be positive numbers.' }, { status: 400 })
     }
 
     // Measure the planner itself, excluding database logging.
@@ -44,6 +49,14 @@ export async function POST(request) {
     return Response.json({ success: true, data: result })
 
   } catch (error) {
+    const quotaError = getPlannerQuotaError(error)
+    if (quotaError) {
+      console.warn('Planner quota limit:', quotaError.code)
+      return Response.json(quotaError, {
+        status: 429,
+        headers: quotaError.retryAfterSeconds ? { 'Retry-After': String(quotaError.retryAfterSeconds) } : {}
+      })
+    }
     console.error('Planner API error:', error)
     return Response.json(
       { error: 'Something went wrong. Please try again.' },

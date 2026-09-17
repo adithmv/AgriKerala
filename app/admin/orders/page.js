@@ -6,7 +6,7 @@ import { supabase } from '../../../lib/supabase'
 import { verifyAdmin } from '../../../lib/adminAuth'
 import Link from 'next/link'
 import {
-  ShoppingCart, Package, TrendingUp, Brain,
+  ShoppingCart, Package, TrendingUp,
   Sprout, Eye, LogOut, Check, Truck, X,
   Plus, Pencil, Trash2
 } from 'lucide-react'
@@ -207,7 +207,6 @@ export default function AdminOrders() {
             { icon: TrendingUp, label: 'Dashboard', href: '/admin/dashboard', active: false },
             { icon: Package, label: 'Products', href: '/admin/products', active: false },
             { icon: ShoppingCart, label: 'Orders', href: '/admin/orders', active: true },
-            { icon: Brain, label: 'Planner Logs', href: '#', active: false },
             { icon: Eye, label: 'View Site', href: '/', active: false },
           ].map(({ icon: Icon, label, href, active }) => (
             <Link key={label} href={href} style={{

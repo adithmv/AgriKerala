@@ -9,7 +9,7 @@ const districts = [
   'Malappuram', 'Kozhikode', 'Wayanad', 'Kannur', 'Kasaragod'
 ]
 
-export default function PlannerForm({ onSubmit, loading }) {
+export default function PlannerForm({ onSubmit, loading, retrySeconds = 0 }) {
   const [formData, setFormData] = useState({
     district: '',
     length: '',
@@ -26,10 +26,12 @@ export default function PlannerForm({ onSubmit, loading }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (loading || retrySeconds > 0) return
     onSubmit(formData)
   }
 
   const isValid = Object.values(formData).every(v => v !== '')
+  const canSubmit = isValid && !loading && retrySeconds <= 0
 
   const selectStyle = {
     width: '100%',
@@ -254,21 +256,21 @@ export default function PlannerForm({ onSubmit, loading }) {
         <div style={{ gridColumn: 'span 2', marginTop: '0.5rem' }}>
           <button
             type="submit"
-            disabled={!isValid || loading}
+            disabled={!canSubmit}
             style={{
               width: '100%',
               padding: '1rem',
-              background: isValid && !loading ? 'var(--primary)' : 'var(--border)',
-              color: isValid && !loading ? 'white' : 'var(--text-secondary)',
+              background: canSubmit ? 'var(--primary)' : 'var(--border)',
+              color: canSubmit ? 'white' : 'var(--text-secondary)',
               border: 'none', borderRadius: '999px',
               fontSize: '1rem', fontWeight: '700',
-              cursor: isValid && !loading ? 'pointer' : 'not-allowed',
+              cursor: canSubmit ? 'pointer' : 'not-allowed',
               transition: 'all 0.3s',
               display: 'flex', alignItems: 'center',
               justifyContent: 'center', gap: '0.75rem'
             }}
-            onMouseEnter={e => { if (isValid && !loading) e.currentTarget.style.background = 'var(--olive)' }}
-            onMouseLeave={e => { if (isValid && !loading) e.currentTarget.style.background = 'var(--primary)' }}
+            onMouseEnter={e => { if (canSubmit) e.currentTarget.style.background = 'var(--olive)' }}
+            onMouseLeave={e => { if (canSubmit) e.currentTarget.style.background = 'var(--primary)' }}
           >
             {loading ? (
               <>
@@ -284,7 +286,7 @@ export default function PlannerForm({ onSubmit, loading }) {
             ) : (
               <>
                 <Leaf size={18} />
-                Generate My Farming Plan
+                {retrySeconds > 0 ? `Try again in ${retrySeconds}s` : 'Generate My Farming Plan'}
               </>
             )}
           </button>

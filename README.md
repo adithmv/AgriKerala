@@ -2,6 +2,27 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### WhatsApp orders
+
+Order buttons and contact links use the business number in `lib/whatsapp.js`:
+**+91 98955 26079**. Product-specific WhatsApp fields no longer control the
+recipient. Customers get a prefilled message addressed to the business and
+must press Send in WhatsApp. Clicking the button does not create a database order.
+
+### Gemini usage limits
+
+Each farming plan now uses one structured Gemini request for the climate
+summary, five crops and their care guides, instead of three requests.
+Automatic SDK retries are disabled; quota errors return HTTP 429 with a useful
+message. Temporary rate limits include a retry delay and the form pauses
+resubmission for that period. Daily quota errors do not suggest a short retry.
+
+If Gemini reports `GenerateRequestsPerDayPerProjectPerModel-FreeTier`, the
+Google project has exhausted its daily allowance. Wait for the daily reset or
+review the project's quota and billing in Google AI Studio. Code changes do not
+restore an exhausted allowance, and creating another API key in the same project
+does not increase it. See https://ai.google.dev/gemini-api/docs/rate-limits.
+
 ### Admin order updates
 
 Before using manual order add/edit/delete and planner response timing, run

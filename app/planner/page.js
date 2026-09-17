@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import PlannerForm from '../../components/PlannerForm'
 import ResultCard from '../../components/ResultCard'
 import { Brain, MapPin, Leaf, ChevronRight } from 'lucide-react'
@@ -9,8 +9,18 @@ export default function PlannerPage() {
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState(null)
   const [error, setError] = useState(null)
+  const [retrySeconds, setRetrySeconds] = useState(0)
+  const submitting = useRef(false)
+
+  useEffect(() => {
+    if (retrySeconds <= 0) return
+    const timer = setTimeout(() => setRetrySeconds(seconds => Math.max(0, seconds - 1)), 1000)
+    return () => clearTimeout(timer)
+  }, [retrySeconds])
 
   const handleSubmit = async (formData) => {
+    if (submitting.current || retrySeconds > 0) return
+    submitting.current = true
     setLoading(true)
     setError(null)
     setResults(null)
@@ -26,6 +36,9 @@ export default function PlannerPage() {
 
       if (!response.ok) {
         setError(data.error || 'Something went wrong. Please try again.')
+        if (response.status === 429 && Number.isFinite(data.retryAfterSeconds)) {
+          setRetrySeconds(Math.max(0, Math.ceil(data.retryAfterSeconds)))
+        }
         return
       }
 
@@ -37,6 +50,7 @@ export default function PlannerPage() {
     } catch (err) {
       setError('Network error. Please check your connection and try again.')
     } finally {
+      submitting.current = false
       setLoading(false)
     }
   }
@@ -126,7 +140,7 @@ export default function PlannerPage() {
               Fill in all fields for the most accurate recommendations.
             </p>
 
-            <PlannerForm onSubmit={handleSubmit} loading={loading} />
+            <PlannerForm onSubmit={handleSubmit} loading={loading} retrySeconds={retrySeconds} />
           </div>
 
           {/* Results */}
@@ -175,7 +189,7 @@ export default function PlannerPage() {
                   Analysing Your Rooftop...
                 </h3>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', lineHeight: '1.7' }}>
-                  Our AI is studying your location, climate data and rooftop conditions. This takes about 15-20 seconds.
+                  Our AI is studying your location and rooftop conditions and preparing your complete plan. This may take a little while.
                 </p>
                 <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   {[
@@ -201,7 +215,7 @@ export default function PlannerPage() {
             )}
 
             {error && (
-              <div style={{
+              <div role="alert" style={{
                 background: '#fef2f2', border: '1px solid #fecaca',
                 borderRadius: '16px', padding: '1.5rem',
                 color: '#dc2626', fontSize: '0.9rem', marginBottom: '1rem'

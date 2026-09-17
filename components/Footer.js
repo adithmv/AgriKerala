@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { BUSINESS_PHONE_DISPLAY } from '../lib/whatsapp'
 import { Sprout, Phone, Mail, MapPin, Instagram, Facebook, Youtube } from 'lucide-react'
 
 
@@ -109,7 +110,7 @@ export default function Footer() {
             <h4 style={{ color: 'white', fontWeight: '600', marginBottom: '1.2rem', fontSize: '0.95rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Contact</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {[
-                { Icon: Phone, text: '+91 98765 43210' },
+                { Icon: Phone, text: BUSINESS_PHONE_DISPLAY },
                 { Icon: Mail, text: 'hello@UrbanSprout.in' },
                 { Icon: MapPin, text: 'Kochi, Kerala, India' },
               ].map(({ Icon, text }) => (

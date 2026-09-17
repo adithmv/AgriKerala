@@ -2,13 +2,13 @@
 
 import Link from 'next/link'
 import { Star, ShoppingCart, Leaf } from 'lucide-react'
+import { createWhatsAppOrderUrl } from '../lib/whatsapp'
 
 export default function ProductCard({ product }) {
   const handleWhatsApp = (e) => {
     e.preventDefault()
     const message = `Hi, I'm interested in buying *${product.name}* from UrbanSprout. Price: ₹${product.price}`
-    const url = `https://wa.me/${product.whatsapp_number}?text=${encodeURIComponent(message)}`
-    window.open(url, '_blank')
+    window.open(createWhatsAppOrderUrl(message), '_blank', 'noopener,noreferrer')
   }
 
   return (
